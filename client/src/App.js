@@ -58,8 +58,8 @@ class App extends Component {
 		return (
 			<>
 				<div className="App">
-					<Layout>
-						<Grid container spacing={1}>
+					<Layout props={...state} component={ 
+						<Grid container spacing={1} style={{ height: '-webkit-fill-available', backgroundColor: '#2e2c33' }}>
 							<Grid item xs sm lg={12} xl>
 								<h1>Good to Go!</h1>
 							</Grid>
@@ -67,6 +67,7 @@ class App extends Component {
 								<div>The stored value is: {this.state.storageValue}</div>
 							</Grid>
 						</Grid>
+					}>
 					</Layout>
 				</div>
 			</>
