@@ -4,7 +4,7 @@ import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
-import ButtonAppBar from "./components/Layout";
+import Layout from "./components/Layout";
 import { Grid } from "@material-ui/core";
 
 class App extends Component {
@@ -58,7 +58,7 @@ class App extends Component {
 		return (
 			<>
 				<div className="App">
-					<ButtonAppBar>
+					<Layout>
 						<Grid container spacing={1}>
 							<Grid item xs sm lg={12} xl>
 								<h1>Good to Go!</h1>
@@ -67,7 +67,7 @@ class App extends Component {
 								<div>The stored value is: {this.state.storageValue}</div>
 							</Grid>
 						</Grid>
-					</ButtonAppBar>
+					</Layout>
 				</div>
 			</>
 		);
