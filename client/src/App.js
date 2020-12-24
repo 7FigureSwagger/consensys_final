@@ -58,7 +58,7 @@ class App extends Component {
 		return (
 			<>
 				<div className="App">
-					<Layout props={...state} component={ 
+					<Layout state={this.state} component={ 
 						<Grid container spacing={1} style={{ height: '-webkit-fill-available', backgroundColor: '#2e2c33' }}>
 							<Grid item xs sm lg={12} xl>
 								<h1>Good to Go!</h1>
@@ -73,9 +73,6 @@ class App extends Component {
 			</>
 		);
 	}
-}
-{
-	/* <footer style={{ marginBottom: 0 }}>Vires In Numeris</footer> */
 }
 
 export default App;

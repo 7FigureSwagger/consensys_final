@@ -67,16 +67,21 @@ export default function Layout(props) {
 					width: "100%",
 					height: "4vh",
 					boxShadow: "#af37bf 5px 0px 10px 0px",
-					position: "sticky",
 				}}
 			>
 				<Grid container spacing={1}>
 					<Grid item xs sm md lg={4}>
 						<Typography variant="subtitle1" children={"Vires In Numeris"} />
 					</Grid>
-					<Grid item xs sm md lg={4}>
-					</Grid>
-					<Grid item xs sm md lg={4}>
+					<Grid item xs sm md lg={8}>
+						<Grid container item lg={12} style={{ placeContent: "flex-end" }}>
+							<Typography variant="subtitle1" children={"Wallet Address: "} />
+							&nbsp;
+							<Typography
+								variant="subtitle1"
+								children={props.state && props.state["accounts"][0]}
+							/>
+						</Grid>
 					</Grid>
 				</Grid>
 			</footer>
