@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -6,7 +6,8 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { Grid } from "@material-ui/core";
+import { Grid, withStyles } from "@material-ui/core";
+
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -20,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		flexGrow: 1,
 	},
+	buttons: {
+		borderColor: "#e947ff",
+		'&:hover': {
+			backgroundColor: "#5f1a7d"
+		}
+	},
 	footer: {
 		left: 0,
 		botttom: 0,
@@ -28,8 +35,12 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+
 export default function Layout(props) {
+	const [state, setState] = useState(props.state);
 	const classes = useStyles();
+
+
 
 	return (
 		<>
@@ -53,7 +64,8 @@ export default function Layout(props) {
 					<Typography variant="h6" className={classes.title}>
 						DumpETH
 					</Typography>
-					<Button color="inherit">Wallet</Button>
+					<Button color="inherit" variant="outlined" className={classes.buttons} onClick={() => {const accounts = state.web3.eth.getAccounts()}}>Wallet</Button>
+					
 				</Toolbar>
 			</AppBar>
 			<div className={classes.root}>{props.component}</div>
@@ -79,7 +91,7 @@ export default function Layout(props) {
 							&nbsp;
 							<Typography
 								variant="subtitle1"
-								children={props.state && props.state["accounts"][0]}
+								children={props.state["accounts"] && props.state["accounts"][0]}
 							/>
 						</Grid>
 					</Grid>
