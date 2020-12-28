@@ -56,10 +56,10 @@ export default function Layout(props) {
 	};
 
 	const getBalances = (address) => {
-		console.log('function hit')
+		console.log("function hit");
 		props.web3Hook().then((res) => console.log(res));
 		return;
-	}
+	};
 
 	return (
 		<>
@@ -107,17 +107,24 @@ export default function Layout(props) {
 				}}
 			>
 				<Grid container spacing={1}>
-					<Grid item xs sm md lg={4}>
+					<Grid item xs sm md lg={2}>
 						<Typography variant="subtitle1" children={"Vires In Numeris"} />
 					</Grid>
-					<Grid item xs sm md lg={8}>
-						<Grid container item lg={12} style={{ placeContent: "flex-end" }}>
-							<Typography variant="subtitle1" children={"Wallet Address: "} />
-							&nbsp;
-							<Typography
-								variant="subtitle1"
-								children={props.state["accounts"] && props.state["accounts"][0]}
-							/>
+					<Grid item xs sm md lg={10}>
+						<Grid container spacing={1} direction="row">
+							<Grid item lg={6}>
+								<Typography
+									variant="subtitle1"
+									children={"Contract Address: "}
+								/>
+								{/* <Typography variant="subtitle1" children={state.contract.get()}/> */}
+							</Grid>
+							<Grid item lg={6}>
+								<Typography variant="subtitle1">
+									Wallet Address: {" "}
+									{state["accounts"] ? state["accounts"][0] : <></>}
+								</Typography>
+							</Grid>
 						</Grid>
 					</Grid>
 				</Grid>
