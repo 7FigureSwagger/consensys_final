@@ -1,12 +1,35 @@
 import React, { Component, useEffect, useState } from "react";
 import "fontsource-roboto";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import { makeStyles } from "@material-ui/core/styles";
 import getWeb3 from "./getWeb3";
-import simpleStorage from "./abi/abi";
 import "./App.css";
 import Layout from "./components/Layout";
-import { Button, Grid } from "@material-ui/core";
+import { Button, Card, CardContent, Divider, Grid, Typography } from "@material-ui/core";
 import Web3 from "web3";
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		flexGrow: 1,
+		height: "100vh",
+		width: "100vw",
+	},
+	contractCard: {
+		display: 'flex',
+		height: 500,
+		width: 400,
+		textAlign: "-webkit-center",
+		marginTop: 50,
+		backgroundColor: "#413f46",
+		border: 'solid',
+		borderWidth: 'thin',
+		borderColor: "#e947ff",
+	},
+	cardTitle: {
+		fontSize: 'inherit',
+		color: '#ffffff'
+	}
+}));
 
 function App(props) {
 	const [state, setState] = useState({
@@ -16,6 +39,11 @@ function App(props) {
 		contract: null,
 	});
 	const [loader, setLoader] = useState(false);
+	const [number, setNumber] = useState(0);
+	const [getNum, setGetNum] = useState("0");
+	const classes = useStyles();
+
+
 
 	async function web3Hook() {
 		// Get network provider and web3 instance.
@@ -44,6 +72,23 @@ function App(props) {
 		});
 	}, []);
 
+	const numberSet = async (t) => {
+		t.preventDefault();
+		const accounts = await window.ethereum.enable();
+		const account = accounts[0];
+		const gas = await state.contract.methods.set(number).estimateGas();
+		const post = await state.contract.methods.set(number).send({
+			from: account,
+			gas,
+		});
+	};
+
+	const numberGet = async (t) => {
+		t.preventDefault();
+		const post = await state.contract.methods.get().call();
+		setGetNum(post);
+	};
+
 	if (!state.web3 || !state.contract) {
 		return <div>Loading Web3, accounts, and contract...</div>;
 	} else {
@@ -64,11 +109,55 @@ function App(props) {
 								}}
 							>
 								<Grid item xs sm lg={12} xl>
-									<h1>Welcome</h1>
+									<Grid container spacing={1}>
+										<Grid item xs sm lg xl style={{ display: 'flex', justifyContent: "center"}}>
+											<Card className={classes.contractCard} raised='true'>
+												<CardContent>
+													<Typography variant='overline' className={classes.cardTitle}>
+														Contract Deposit Balances:
+													</Typography>
+													<Divider style={{ background: '#ffffff' }}/>
+												</CardContent>
+											</Card>
+										</Grid>
+										<Grid item xs sm lg xl>
+											<h1>Welcome</h1>
+										</Grid>
+										<Grid item xs sm lg xl></Grid>
+									</Grid>
 								</Grid>
 								<Grid item xs sm lg={12} xl>
-									<Button>BUTTTONOOONON</Button>
-									<div>Please connect a wallet to get started!</div>
+									<div className="main">
+										<div className="card">
+											<form className="form" onSubmit={numberSet}>
+												<label>
+													Set your uint256:
+													<input
+														className="input"
+														type="text"
+														name="name"
+														onChange={(t) => setNumber(t.target.value)}
+													/>
+												</label>
+												<button
+													className="button"
+													type="submit"
+													value="Confirm"
+												>
+													Confirm
+												</button>
+											</form>
+											<br />
+											<button
+												className="button"
+												onClick={numberGet}
+												type="button"
+											>
+												Get your uint256
+											</button>
+											{getNum}
+										</div>
+									</div>
 								</Grid>
 							</Grid>
 						}
