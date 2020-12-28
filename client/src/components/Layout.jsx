@@ -6,8 +6,18 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { Grid, withStyles } from "@material-ui/core";
-
+import {
+	Dialog,
+	DialogTitle,
+	Divider,
+	Grid,
+	List,
+	ListItem,
+	ListItemText,
+	Modal,
+	withStyles,
+} from "@material-ui/core";
+import Wallet from "./Wallet";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -23,9 +33,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	buttons: {
 		borderColor: "#e947ff",
-		'&:hover': {
-			backgroundColor: "#5f1a7d"
-		}
+		"&:hover": {
+			backgroundColor: "#5f1a7d",
+		},
 	},
 	footer: {
 		left: 0,
@@ -35,12 +45,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-
 export default function Layout(props) {
 	const [state, setState] = useState(props.state);
+	const [openWallet, setOpenWallet] = useState(false);
 	const classes = useStyles();
 
-
+	const toggleWallet = () => {
+		setOpenWallet(!openWallet);
+	};
 
 	return (
 		<>
@@ -64,11 +76,21 @@ export default function Layout(props) {
 					<Typography variant="h6" className={classes.title}>
 						DumpETH
 					</Typography>
-					<Button color="inherit" variant="outlined" className={classes.buttons} onClick={() => {const accounts = state.web3.eth.getAccounts()}}>Wallet</Button>
-					
+					<Button
+						color="inherit"
+						variant="outlined"
+						className={classes.buttons}
+						onClick={() => toggleWallet()}
+					>
+						Wallet
+					</Button>
 				</Toolbar>
 			</AppBar>
-			<div className={classes.root}>{props.component}</div>
+			<div className={classes.root}>
+				{props.component}
+				{/* <Modal open={openWallet} onBackdropClick={() => toggleWallet()}>
+				</Modal> */}
+			</div>
 			<footer
 				style={{
 					bottom: 0,
@@ -97,6 +119,18 @@ export default function Layout(props) {
 					</Grid>
 				</Grid>
 			</footer>
+			<Dialog open={openWallet} onBackdropClick={() => toggleWallet()}>
+				<List>
+					<DialogTitle>Wallet Information</DialogTitle>
+					<Divider />
+					<ListItem button>
+						<ListItemText>
+							Address: &nbsp;
+							{state.accounts}
+						</ListItemText>
+					</ListItem>
+				</List>
+			</Dialog>
 		</>
 	);
 }
