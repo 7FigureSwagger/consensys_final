@@ -115,14 +115,15 @@ export default function Layout(props) {
 							<Grid item lg={6}>
 								<Typography
 									variant="subtitle1"
-									children={"Contract Address: "}
+									children={
+										"Contract Address: " + (state["contract"] ? state["contract"]["_address"]: <></>)
+									}
 								/>
-								{/* <Typography variant="subtitle1" children={state.contract.get()}/> */}
 							</Grid>
 							<Grid item lg={6}>
-								<Typography variant="subtitle1">
-									Wallet Address: {" "}
-									{state["accounts"] ? state["accounts"][0] : <></>}
+								<Typography variant="subtitle1" children={
+									"Wallet Address: " + (state["accounts"] ? state["accounts"][0] : <></>)
+								}>
 								</Typography>
 							</Grid>
 						</Grid>

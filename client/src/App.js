@@ -2,10 +2,11 @@ import React, { Component, useEffect, useState } from "react";
 import "fontsource-roboto";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./getWeb3";
-
+import simpleStorage from "./abi/abi";
 import "./App.css";
 import Layout from "./components/Layout";
-import { Grid } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
+import Web3 from "web3";
 
 function App(props) {
 	const [state, setState] = useState({
@@ -27,25 +28,23 @@ function App(props) {
 			// Use web3 to get the user's accounts.
 			// const accounts = web3.eth.getAccounts();
 			web3.eth.getAccounts().then((res) => {
-				console.log(res); 
 				const accounts = res;
-				
+
 				// Get the contract instance.
-				const networkId = web3.eth.net.getId();
-				const deployedNetwork = SimpleStorageContract.networks[networkId];
+				// const networkId = web3.eth.net.getId();
+				// const deployedNetwork = SimpleStorageContract.networks[networkId];
 				const instance = new web3.eth.Contract(
-					SimpleStorageContract.abi,
-					deployedNetwork && deployedNetwork.address
-					);
-					
-					// Set web3, accounts, and contract to the state, and then proceed with an
-					// example of interacting with the contract's methods.
-					setState({ web3, accounts, contract: instance });
-				})
+					SimpleStorageContract["abi"],
+					SimpleStorageContract["networks"][5777]["address"]
+				);
+
+				// Set web3, accounts, and contract to the state
+				setState({ web3, accounts, contract: instance });
+			});
 		});
 	}, []);
 
-	if (state.web3 == null) {
+	if (!state.web3 || !state.contract) {
 		return <div>Loading Web3, accounts, and contract...</div>;
 	} else {
 		return (
@@ -54,6 +53,7 @@ function App(props) {
 					<Layout
 						state={state}
 						web3Hook={web3Hook}
+						// appAddress={sContract}
 						component={
 							<Grid
 								container
@@ -67,9 +67,8 @@ function App(props) {
 									<h1>Welcome</h1>
 								</Grid>
 								<Grid item xs sm lg={12} xl>
-									<div>
-										Please connect a wallet to get started!
-									</div>
+									<Button>BUTTTONOOONON</Button>
+									<div>Please connect a wallet to get started!</div>
 								</Grid>
 							</Grid>
 						}
