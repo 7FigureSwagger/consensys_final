@@ -15,6 +15,7 @@ import {
 	ListItem,
 	ListItemText,
 	Modal,
+	Tooltip,
 	withStyles,
 } from "@material-ui/core";
 import Wallet from "./Wallet";
@@ -54,6 +55,12 @@ export default function Layout(props) {
 		setOpenWallet(!openWallet);
 	};
 
+	const getBalances = (address) => {
+		console.log('function hit')
+		props.web3Hook().then((res) => console.log(res));
+		return;
+	}
+
 	return (
 		<>
 			<AppBar
@@ -86,11 +93,7 @@ export default function Layout(props) {
 					</Button>
 				</Toolbar>
 			</AppBar>
-			<div className={classes.root}>
-				{props.component}
-				{/* <Modal open={openWallet} onBackdropClick={() => toggleWallet()}>
-				</Modal> */}
-			</div>
+			<div className={classes.root}>{props.component}</div>
 			<footer
 				style={{
 					bottom: 0,
@@ -120,16 +123,7 @@ export default function Layout(props) {
 				</Grid>
 			</footer>
 			<Dialog open={openWallet} onBackdropClick={() => toggleWallet()}>
-				<List>
-					<DialogTitle>Wallet Information</DialogTitle>
-					<Divider />
-					<ListItem button>
-						<ListItemText>
-							Address: &nbsp;
-							{state.accounts}
-						</ListItemText>
-					</ListItem>
-				</List>
+				<Wallet state={state} />
 			</Dialog>
 		</>
 	);

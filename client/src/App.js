@@ -53,6 +53,7 @@ function App(props) {
 				<div className="App">
 					<Layout
 						state={state}
+						web3Hook={web3Hook}
 						component={
 							<Grid
 								container
