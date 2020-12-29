@@ -5,7 +5,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import getWeb3 from "./getWeb3";
 import "./App.css";
 import Layout from "./components/Layout";
-import { Button, Card, CardContent, Divider, Grid, Typography } from "@material-ui/core";
+import {
+	Button,
+	Card,
+	CardContent,
+	Divider,
+	Grid,
+	Typography,
+} from "@material-ui/core";
 import Web3 from "web3";
 
 const useStyles = makeStyles((theme) => ({
@@ -14,21 +21,29 @@ const useStyles = makeStyles((theme) => ({
 		height: "100vh",
 		width: "100vw",
 	},
+	buttons: {
+		color: '#9265e6',
+		borderColor: "#e947ff",
+		"&:hover": {
+			backgroundColor: "#5c5a61",
+		},
+	},
 	contractCard: {
-		display: 'flex',
+		display: "flex",
 		height: 500,
 		width: 400,
 		textAlign: "-webkit-center",
 		marginTop: 50,
 		backgroundColor: "#413f46",
-		border: 'solid',
-		borderWidth: 'thin',
 		borderColor: "#e947ff",
 	},
+	cardContent: {
+		width: "-webkit-fill-available",
+	},
 	cardTitle: {
-		fontSize: 'inherit',
-		color: '#ffffff'
-	}
+		fontSize: "inherit",
+		color: "#ffffff",
+	},
 }));
 
 function App(props) {
@@ -41,9 +56,9 @@ function App(props) {
 	const [loader, setLoader] = useState(false);
 	const [number, setNumber] = useState(0);
 	const [getNum, setGetNum] = useState("0");
+	const [contractEth, getContractEth] = useState(0);
+	const [contractTokens, getContractTokens] = useState(0);
 	const classes = useStyles();
-
-
 
 	async function web3Hook() {
 		// Get network provider and web3 instance.
@@ -98,7 +113,6 @@ function App(props) {
 					<Layout
 						state={state}
 						web3Hook={web3Hook}
-						// appAddress={sContract}
 						component={
 							<Grid
 								container
@@ -110,13 +124,54 @@ function App(props) {
 							>
 								<Grid item xs sm lg={12} xl>
 									<Grid container spacing={1}>
-										<Grid item xs sm lg xl style={{ display: 'flex', justifyContent: "center"}}>
-											<Card className={classes.contractCard} raised='true'>
-												<CardContent>
-													<Typography variant='overline' className={classes.cardTitle}>
-														Contract Deposit Balances:
-													</Typography>
-													<Divider style={{ background: '#ffffff' }}/>
+										<Grid
+											item
+											lg
+											xl
+											style={{ display: "flex", justifyContent: "center" }}
+										>
+											<Card
+												className={classes.contractCard}
+												raised="true"
+												variant="outlined"
+											>
+												<CardContent className={classes.cardContent}>
+													<Grid container spacing={1}>
+														<Grid item xs sm md={12} lg={12}>
+															<Typography
+																variant="overline"
+																className={classes.cardTitle}
+															>
+																Contract Deposit Balances:
+															</Typography>
+															<Divider style={{ background: "#ffffff" }} />
+														</Grid>
+													</Grid>
+													&nbsp;
+													<Grid container spacing={1}>
+														<Grid item sm md lg={12}>
+															<Grid container spacing={1}>
+																<Grid item lg={6} xl={6}>
+																	<Typography variant='h6' style={{ color: '#9265e6' }}>Eth: {contractEth}</Typography>
+																</Grid>
+																<Grid item lg={6} xl={6}>
+																	<Button variant="outlined" className={classes.buttons} size='small'> {contractEth ? 'Refresh' : 'Load' }</Button>
+																</Grid>
+															</Grid>
+														</Grid>
+														<Grid item sm md lg={12}>
+															<Grid container spacing={1}>
+																<Grid item lg={6} xl={6}>
+																	<Typography variant='h6' style={{ color: '#9265e6' }}>
+																		Tokens: {contractTokens}
+																	</Typography>
+																</Grid>
+																<Grid item lg={6} xl={6}>
+																	<Button variant="outlined" className={classes.buttons} size='small'>{contractTokens ? 'Refresh' : 'Load' }</Button>
+																</Grid>
+															</Grid>
+														</Grid>
+													</Grid>
 												</CardContent>
 											</Card>
 										</Grid>
@@ -126,7 +181,7 @@ function App(props) {
 										<Grid item xs sm lg xl></Grid>
 									</Grid>
 								</Grid>
-								<Grid item xs sm lg={12} xl>
+								{/* <Grid item xs sm lg={12} xl>
 									<div className="main">
 										<div className="card">
 											<form className="form" onSubmit={numberSet}>
@@ -158,7 +213,7 @@ function App(props) {
 											{getNum}
 										</div>
 									</div>
-								</Grid>
+								</Grid> */}
 							</Grid>
 						}
 					></Layout>

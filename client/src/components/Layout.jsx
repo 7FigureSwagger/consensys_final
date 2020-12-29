@@ -86,6 +86,7 @@ export default function Layout(props) {
 					<Button
 						color="inherit"
 						variant="outlined"
+						size='small'
 						className={classes.buttons}
 						onClick={() => toggleWallet()}
 					>
