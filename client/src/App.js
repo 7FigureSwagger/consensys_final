@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 		color: '#9265e6',
 		borderColor: "#e947ff",
 		"&:hover": {
+			color: "#ffffff",
 			backgroundColor: "#5c5a61",
 		},
 	},
@@ -97,13 +98,13 @@ function App(props) {
 		});
 	};
 
-
 	// Retrieve number from contract
 	const numberGet = async (t) => {
 		t.preventDefault();
 		const post = await state.contract.methods.get().call();
 		setGetNum(post);
 	};
+
 
 	// Make sure web3 and contract instance is loaded for proper rendering
 	if (!state.web3 || !state.contract) {
@@ -157,7 +158,7 @@ function App(props) {
 																	<Typography variant='h6' style={{ color: '#9265e6' }}>Eth: {contractEth}</Typography>
 																</Grid>
 																<Grid item lg={6} xl={6}>
-																	<Button variant="outlined" className={classes.buttons} size='small'> {contractEth ? 'Refresh' : 'Load' }</Button>
+																	<Button variant="outlined" className={classes.buttons} size='small' > {contractEth ? 'Refresh' : 'Load' }</Button>
 																</Grid>
 															</Grid>
 														</Grid>

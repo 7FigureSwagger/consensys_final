@@ -33,8 +33,10 @@ const useStyles = makeStyles((theme) => ({
 		flexGrow: 1,
 	},
 	buttons: {
+		color: "#9265e6",
 		borderColor: "#e947ff",
 		"&:hover": {
+			color: "#ffffff",
 			backgroundColor: "#5f1a7d",
 		},
 	},
@@ -53,12 +55,6 @@ export default function Layout(props) {
 
 	const toggleWallet = () => {
 		setOpenWallet(!openWallet);
-	};
-
-	const getBalances = (address) => {
-		console.log("function hit");
-		props.web3Hook().then((res) => console.log(res));
-		return;
 	};
 
 	return (
