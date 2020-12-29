@@ -60,22 +60,19 @@ function App(props) {
 	const [contractTokens, getContractTokens] = useState(0);
 	const classes = useStyles();
 
+	// Get network web3 instance.
 	async function web3Hook() {
-		// Get network provider and web3 instance.
 		const web3 = getWeb3();
 		return web3;
 	}
 
 	useEffect(() => {
+		// Resolve promise returned from async func to get the user's accounts.
 		web3Hook().then((web3) => {
-			// Use web3 to get the user's accounts.
-			// const accounts = web3.eth.getAccounts();
 			web3.eth.getAccounts().then((res) => {
 				const accounts = res;
 
-				// Get the contract instance.
-				// const networkId = web3.eth.net.getId();
-				// const deployedNetwork = SimpleStorageContract.networks[networkId];
+				// Get the contract instance and address to put into state
 				const instance = new web3.eth.Contract(
 					SimpleStorageContract["abi"],
 					SimpleStorageContract["networks"][5777]["address"]
@@ -87,6 +84,8 @@ function App(props) {
 		});
 	}, []);
 
+
+	// Set new number in contract
 	const numberSet = async (t) => {
 		t.preventDefault();
 		const accounts = await window.ethereum.enable();
@@ -98,12 +97,15 @@ function App(props) {
 		});
 	};
 
+
+	// Retrieve number from contract
 	const numberGet = async (t) => {
 		t.preventDefault();
 		const post = await state.contract.methods.get().call();
 		setGetNum(post);
 	};
 
+	// Make sure web3 and contract instance is loaded for proper rendering
 	if (!state.web3 || !state.contract) {
 		return <div>Loading Web3, accounts, and contract...</div>;
 	} else {
