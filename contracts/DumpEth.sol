@@ -14,23 +14,26 @@ contract DumpEth {
 
     // Ensure caller is admin of contract
     modifier isAdmin() {
-        require(msg.sender == owner, 'Access denied! Admin only!');
+        require(msg.sender == owner, "Access denied! Admin only!");
         _;
     }
 
     // Ensure contract is not stopped before proceding
     modifier emergencyStop() {
-        require(!stopped, 'Circuit breaker flipped, access denied!');
+        require(!stopped, "Circuit breaker flipped, access denied!");
         _;
     }
     modifier onlyAfterStopped() {
-        require(stopped, 'Only accessible in emergency shutdown!');
+        require(stopped, "Only accessible in emergency shutdown!");
         _;
     }
 
     // Check balance before allowing withdrawal
     modifier goodBalance(address _sender) {
-        require(balance[_sender] >= msg.value, 'Deposited balance insufficient!');
+        require(
+            balance[_sender] >= msg.value,
+            "Deposited balance insufficient!"
+        );
         _;
     }
 
@@ -66,7 +69,7 @@ contract DumpEth {
         // Only allow the 'deployer' of the contract to deposit
         {
             balance[msg.sender] = balance[msg.sender] += msg.value;
-						address(this).transfer(msg.value);
+            address(this).transfer(msg.value);
             emit LogDepositMade(address(msg.sender), msg.value);
             return balance[msg.sender];
         }
@@ -83,7 +86,7 @@ contract DumpEth {
         {
             balance[msg.sender] = balance[msg.sender] -= _amount;
             emit LogWithdrawalMade(address(msg.sender), _amount);
-						msg.sender.transfer(address(this).balance); // Withdraw Ether to senders address if balance is good and is admin
+            msg.sender.transfer(address(this).balance); // Withdraw Ether to senders address if balance is good and is admin
         }
     }
 
@@ -98,7 +101,7 @@ contract DumpEth {
             uint256 amt = balance[msg.sender];
             balance[msg.sender] = 0;
             emit LogWithdrawalMade(address(msg.sender), amt);
-						msg.sender.transfer(address(this).balance); // Withdraw total balance stored in contract, last operation for re-entrancy protection
+            msg.sender.transfer(address(this).balance); // Withdraw total balance stored in contract, last operation for re-entrancy protection
         }
     }
 
