@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.5;
+pragma solidity >=0.5.16;
 
 contract DumpEth {
     // Balance 'state' of the contract
@@ -11,6 +11,25 @@ contract DumpEth {
 
     // State for circuit breaker
     bool private stopped;
+
+
+    // Set the owner to the creator of this contract
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    // Events to emit for user deposit to contract and withdrawal
+    event LogDepositMade(address accountAddress, uint256 amount);
+    event LogWithdrawalMade(address accountAddress, uint256 amount);
+
+    // Event to emit when ETH received without calldata
+    event Received(address sender, uint256 value);
+
+    // Fallback function in case tx is sent without ether or calls function that does not exist
+    function() external payable {revert();}
+
+    // Fallback 'receive' funciton to collect ETH sent with empty calldata
+    // receive() external payable { emit Received(msg.sender, msg.value);}
 
     // Ensure caller is admin of contract
     modifier isAdmin() {
@@ -37,28 +56,6 @@ contract DumpEth {
         _;
     }
 
-    // Set the owner to the creator of this contract
-    constructor() {
-        owner = msg.sender;
-    }
-
-    // Events to emit for user deposit to contract and withdrawal
-    event LogDepositMade(address accountAddress, uint256 amount);
-    event LogWithdrawalMade(address accountAddress, uint256 amount);
-
-    // Event to emit when ETH received without calldata
-    event Received(address sender, uint256 value);
-
-    // Fallback function in case tx is sent without ether or calls function that does not exist
-    fallback() external payable {
-        revert();
-    }
-
-    // Fallback 'receive' funciton to collect ETH sent with empty calldata
-    receive() external payable {
-        emit Received(msg.sender, msg.value);
-    }
-
     // Function for stopping contract
     function toggleActive() public isAdmin {
         stopped = !stopped;
@@ -70,7 +67,7 @@ contract DumpEth {
         {
             balance[msg.sender] = balance[msg.sender] += msg.value;
             emit LogDepositMade(address(msg.sender), msg.value);
-            require(address(this).send(msg.value));
+            // .transfer(msg.value);
             return balance[msg.sender];
         }
     }
@@ -87,7 +84,8 @@ contract DumpEth {
         {
             balance[msg.sender] = balance[msg.sender] -= _amount;
             emit LogWithdrawalMade(address(msg.sender), _amount);
-            require(msg.sender.send(address(this).balance)); // Withdraw Ether to senders address if balance is good and is admin
+            // Withdraw Ether to senders address if balance is good and is admin
+            // msg.sender.transfer(address(msg.sender).balance);
             return balance[msg.sender];
         }
     }
@@ -103,7 +101,7 @@ contract DumpEth {
             uint256 amt = balance[msg.sender];
             balance[msg.sender] = 0;
             emit LogWithdrawalMade(address(msg.sender), amt);
-            require(msg.sender.send(address(this).balance)); // Withdraw total balance stored in contract, last operation for re-entrancy protection
+            // msg.sender.transfer(address(this).balance); // Withdraw total balance stored in contract, last operation for re-entrancy protection
         }
     }
 
