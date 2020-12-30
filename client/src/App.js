@@ -1,6 +1,7 @@
 import React, { Component, useEffect, useState } from "react";
 import "fontsource-roboto";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+// import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import DumpEth from "./contracts/DumpEth.json"
 import { makeStyles } from "@material-ui/core/styles";
 import getWeb3 from "./getWeb3";
 import "./App.css";
@@ -75,8 +76,8 @@ function App(props) {
 
 				// Get the contract instance and address to put into state
 				const instance = new web3.eth.Contract(
-					SimpleStorageContract["abi"],
-					SimpleStorageContract["networks"][5777]["address"]
+					DumpEth["abi"],
+					DumpEth["networks"][5777]["address"]
 				);
 
 				// Set web3, accounts, and contract to the state

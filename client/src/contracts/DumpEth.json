@@ -5711,9 +5711,75 @@
     "name": "solc",
     "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "5777": {
+      "events": {
+        "0xa8126f7572bb1fdeae5b5aa9ec126438b91f658a07873f009d041ae690f3a193": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "accountAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogDepositMade",
+          "type": "event"
+        },
+        "0xa502fd41811afb69adfdfadf22b00a476d683cb0e8fcb04ecef9e331e2a26a6d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "accountAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogWithdrawalMade",
+          "type": "event"
+        },
+        "0x88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Received",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xBA57Ff722c547290D902145e727Ed239Aa9D747a",
+      "transactionHash": "0xfe62e1b91918b3b007015e19094967510e5dbda452cca90fc32845195b0d7c76"
+    }
+  },
   "schemaVersion": "3.2.5",
-  "updatedAt": "2020-12-30T04:49:42.863Z",
+  "updatedAt": "2020-12-30T19:07:42.060Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
