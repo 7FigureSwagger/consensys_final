@@ -14,23 +14,23 @@ contract DumpEth {
 
     // Ensure caller is admin of contract
     modifier isAdmin() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, 'Access denied! Admin only!');
         _;
     }
 
     // Ensure contract is not stopped before proceding
     modifier emergencyStop() {
-        require(!stopped);
+        require(!stopped, 'Circuit breaker flipped, access denied!');
         _;
     }
     modifier onlyAfterStopped() {
-        require(stopped);
+        require(stopped, 'Only accessible in emergency shutdown!');
         _;
     }
 
     // Check balance before allowing withdrawal
     modifier goodBalance(address _sender) {
-        require(balance[_sender] >= msg.value);
+        require(balance[_sender] >= msg.value, 'Deposited balance insufficient!');
         _;
     }
 
@@ -79,13 +79,11 @@ contract DumpEth {
         goodBalance(msg.sender)
         isAdmin
         emergencyStop
-        returns (uint256)
     {
         {
             balance[msg.sender] = balance[msg.sender] -= _amount;
-						msg.sender.transfer(balance[msg.sender]); // Withdraw Ether to senders address if balance is good and is admin
             emit LogWithdrawalMade(address(msg.sender), _amount);
-            return balance[msg.sender];
+						msg.sender.transfer(address(this).balance); // Withdraw Ether to senders address if balance is good and is admin
         }
     }
 
@@ -98,9 +96,9 @@ contract DumpEth {
     {
         {
             uint256 amt = balance[msg.sender];
-						msg.sender.transfer(balance[msg.sender]);
             balance[msg.sender] = 0;
             emit LogWithdrawalMade(address(msg.sender), amt);
+						msg.sender.transfer(address(this).balance); // Withdraw total balance stored in contract, last operation for re-entrancy protection
         }
     }
 
