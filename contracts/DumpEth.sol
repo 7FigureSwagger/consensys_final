@@ -37,8 +37,8 @@ contract DumpEth {
         _;
     }
 
+    // Set the owner to the creator of this contract
     constructor() {
-        // Set the owner to the creator of this contract
         owner = msg.sender;
     }
 
@@ -69,8 +69,8 @@ contract DumpEth {
         // Only allow the 'deployer' of the contract to deposit
         {
             balance[msg.sender] = balance[msg.sender] += msg.value;
-            address(this).transfer(msg.value);
             emit LogDepositMade(address(msg.sender), msg.value);
+            require(address(this).send(msg.value));
             return balance[msg.sender];
         }
     }
@@ -82,11 +82,13 @@ contract DumpEth {
         goodBalance(msg.sender)
         isAdmin
         emergencyStop
+        returns (uint256)
     {
         {
             balance[msg.sender] = balance[msg.sender] -= _amount;
             emit LogWithdrawalMade(address(msg.sender), _amount);
-            msg.sender.transfer(address(this).balance); // Withdraw Ether to senders address if balance is good and is admin
+            require(msg.sender.send(address(this).balance)); // Withdraw Ether to senders address if balance is good and is admin
+            return balance[msg.sender];
         }
     }
 
@@ -101,7 +103,7 @@ contract DumpEth {
             uint256 amt = balance[msg.sender];
             balance[msg.sender] = 0;
             emit LogWithdrawalMade(address(msg.sender), amt);
-            msg.sender.transfer(address(this).balance); // Withdraw total balance stored in contract, last operation for re-entrancy protection
+            require(msg.sender.send(address(this).balance)); // Withdraw total balance stored in contract, last operation for re-entrancy protection
         }
     }
 
