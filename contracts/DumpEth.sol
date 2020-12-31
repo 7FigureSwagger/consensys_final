@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.5.16;
+pragma solidity >=0.7.0;
 
 contract DumpEth {
     // Balance 'state' of the contract
@@ -14,7 +14,7 @@ contract DumpEth {
 
 
     // Set the owner to the creator of this contract
-    constructor() public {
+    constructor() {
         owner = msg.sender;
     }
 
@@ -26,10 +26,10 @@ contract DumpEth {
     event Received(address sender, uint256 value);
 
     // Fallback function in case tx is sent without ether or calls function that does not exist
-    function() external payable {revert();}
+    fallback() external payable {revert();}
 
     // Fallback 'receive' funciton to collect ETH sent with empty calldata
-    // receive() external payable { emit Received(msg.sender, msg.value);}
+    receive() external payable { emit Received(msg.sender, msg.value);}
 
     // Ensure caller is admin of contract
     modifier isAdmin() {
@@ -48,9 +48,9 @@ contract DumpEth {
     }
 
     // Check balance before allowing withdrawal
-    modifier goodBalance(address _sender) {
+    modifier goodBalance(address _sender, uint _request) {
         require(
-            balance[_sender] >= msg.value,
+            balance[_sender] >= _request,
             "Deposited balance insufficient!"
         );
         _;
@@ -65,48 +65,47 @@ contract DumpEth {
     function deposit() public payable isAdmin emergencyStop returns (uint256) {
         // Only allow the 'deployer' of the contract to deposit
         {
-            balance[msg.sender] = balance[msg.sender] += msg.value;
+            require(msg.value > 0, 'No Ether sent.');
             emit LogDepositMade(address(msg.sender), msg.value);
-            // .transfer(msg.value);
-            return balance[msg.sender];
+            balance[msg.sender] = balance[msg.sender] += msg.value;
         }
     }
 
     // Function to withdraw from contract
     function withdraw(uint256 _amount)
-        private
+        public
         // Only allow the 'deployer' of the contract to withdraw, checks balance
-        goodBalance(msg.sender)
+        goodBalance(msg.sender, _amount)
         isAdmin
         emergencyStop
-        returns (uint256)
     {
         {
-            balance[msg.sender] = balance[msg.sender] -= _amount;
-            emit LogWithdrawalMade(address(msg.sender), _amount);
             // Withdraw Ether to senders address if balance is good and is admin
-            // msg.sender.transfer(address(msg.sender).balance);
-            return balance[msg.sender];
+            emit LogWithdrawalMade(address(msg.sender), _amount);
+            balance[msg.sender] = balance[msg.sender] -= _amount;
+            address payable x = msg.sender;
+            x.transfer(_amount);
         }
     }
 
     // Emergency withdrawal, after circuit breaker flipped
     function emergencyWithdrawal()
         private
-        goodBalance(msg.sender)
+        goodBalance(msg.sender, balance[msg.sender])
         isAdmin
         onlyAfterStopped
     {
         {
-            uint256 amt = balance[msg.sender];
-            balance[msg.sender] = 0;
             emit LogWithdrawalMade(address(msg.sender), amt);
-            // msg.sender.transfer(address(this).balance); // Withdraw total balance stored in contract, last operation for re-entrancy protection
+            uint256 amt = balance[msg.sender];
+            address payable x = msg.sender;
+            balance[msg.sender] = 0;
+            x.transfer(amt); // Withdraw total balance stored in contract, last operation for re-entrancy protection
         }
     }
 
     // Function to check balance of contract
-    function getContractBalance() private view returns (uint256) {
+    function getContractBalance() public view returns (uint256) {
         return address(this).balance;
     }
 }

@@ -58,7 +58,7 @@ function App(props) {
 	const [loader, setLoader] = useState(false);
 	const [number, setNumber] = useState(0);
 	const [getNum, setGetNum] = useState("0");
-	const [contractEth, getContractEth] = useState(0);
+	const [contractEth, setContractEth] = useState(0);
 	const [contractTokens, getContractTokens] = useState(0);
 	const classes = useStyles();
 
@@ -88,11 +88,11 @@ function App(props) {
 
 
 	// Set new number in contract
-	const numberSet = async (t) => {
+	const contractDeposit = async (t) => {
 		t.preventDefault();
 		const accounts = await window.ethereum.enable();
 		const account = accounts[0];
-		const gas = await state.contract.methods.set(number).estimateGas();
+		const gas = await state.contract.methods.getContrac(number).estimateGas();
 		const post = await state.contract.methods.set(number).send({
 			from: account,
 			gas,
@@ -101,9 +101,10 @@ function App(props) {
 
 	// Retrieve number from contract
 	const numberGet = async (t) => {
-		t.preventDefault();
-		const post = await state.contract.methods.get().call();
-		setGetNum(post);
+		// t.preventDefault();
+		const post = await state.contract.methods.getContractBalance();
+		// console.log(post);
+		setContractEth(post);
 	};
 
 
@@ -159,7 +160,7 @@ function App(props) {
 																	<Typography variant='h6' style={{ color: '#9265e6' }}>Eth: {contractEth}</Typography>
 																</Grid>
 																<Grid item lg={6} xl={6}>
-																	<Button variant="outlined" className={classes.buttons} size='small' > {contractEth ? 'Refresh' : 'Load' }</Button>
+																	<Button variant="outlined" className={classes.buttons} size='small' onClick={() => numberGet()}> {contractEth ? 'Refresh' : 'Load' }</Button>
 																</Grid>
 															</Grid>
 														</Grid>
