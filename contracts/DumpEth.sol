@@ -62,7 +62,7 @@ contract DumpEth {
     }
 
     // Function to deposit to contract
-    function deposit() public payable isAdmin emergencyStop returns (uint256) {
+    function deposit() public payable isAdmin emergencyStop {
         // Only allow the 'deployer' of the contract to deposit
         {
             require(msg.value > 0, 'No Ether sent.');
@@ -96,8 +96,8 @@ contract DumpEth {
         onlyAfterStopped
     {
         {
-            emit LogWithdrawalMade(address(msg.sender), amt);
             uint256 amt = balance[msg.sender];
+            emit LogWithdrawalMade(address(msg.sender), amt);
             address payable x = msg.sender;
             balance[msg.sender] = 0;
             x.transfer(amt); // Withdraw total balance stored in contract, last operation for re-entrancy protection
