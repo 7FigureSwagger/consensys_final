@@ -105,7 +105,8 @@ contract DumpEth {
     }
 
     // Function to check balance of contract
-    function getContractBalance() public view returns (uint256) {
+    function getContractBalance() public view returns (uint256) 
+    {
         return address(this).balance;
     }
 }

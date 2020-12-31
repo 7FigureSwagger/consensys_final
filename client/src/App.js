@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from "react";
 import "fontsource-roboto";
 // import SimpleStorageContract from "./contracts/SimpleStorage.json";
-import DumpEth from "./contracts/DumpEth.json"
+import DumpEth from "./contracts/DumpEth.json";
 import { makeStyles } from "@material-ui/core/styles";
 import getWeb3 from "./getWeb3";
 import "./App.css";
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 		width: "100vw",
 	},
 	buttons: {
-		color: '#9265e6',
+		color: "#9265e6",
 		borderColor: "#e947ff",
 		"&:hover": {
 			color: "#ffffff",
@@ -86,7 +86,6 @@ function App(props) {
 		});
 	}, []);
 
-
 	// Set new number in contract
 	const contractDeposit = async (t) => {
 		t.preventDefault();
@@ -101,12 +100,17 @@ function App(props) {
 
 	// Retrieve number from contract
 	const numberGet = async (t) => {
-		// t.preventDefault();
-		const post = await state.contract.methods.getContractBalance();
-		// console.log(post);
-		setContractEth(post);
-	};
+		const { contract, accounts } = state;
 
+		try {
+			await contract.methods.getContractBalance().call({from: accounts[0]}, (err, val) => {
+				console.log(err, val);
+				setContractEth(val);
+			});
+		} catch (err) {
+			console.log('function failed.');
+		}
+	};
 
 	// Make sure web3 and contract instance is loaded for proper rendering
 	if (!state.web3 || !state.contract) {
@@ -157,22 +161,44 @@ function App(props) {
 														<Grid item sm md lg={12}>
 															<Grid container spacing={1}>
 																<Grid item lg={6} xl={6}>
-																	<Typography variant='h6' style={{ color: '#9265e6' }}>Eth: {contractEth}</Typography>
+																	<Typography
+																		variant="h6"
+																		style={{ color: "#9265e6" }}
+																	>
+																		Eth: {contractEth ? contractEth : "-"}
+																	</Typography>
 																</Grid>
 																<Grid item lg={6} xl={6}>
-																	<Button variant="outlined" className={classes.buttons} size='small' onClick={() => numberGet()}> {contractEth ? 'Refresh' : 'Load' }</Button>
+																	<Button
+																		variant="outlined"
+																		className={classes.buttons}
+																		size="small"
+																		onClick={() => numberGet()}
+																	>
+																		{" "}
+																		{contractEth ? "Refresh" : "Load"}
+																	</Button>
 																</Grid>
 															</Grid>
 														</Grid>
 														<Grid item sm md lg={12}>
 															<Grid container spacing={1}>
 																<Grid item lg={6} xl={6}>
-																	<Typography variant='h6' style={{ color: '#9265e6' }}>
-																		Tokens: {contractTokens}
+																	<Typography
+																		variant="h6"
+																		style={{ color: "#9265e6" }}
+																	>
+																		Tokens: {contractTokens ? contractTokens : "-"}
 																	</Typography>
 																</Grid>
 																<Grid item lg={6} xl={6}>
-																	<Button variant="outlined" className={classes.buttons} size='small'>{contractTokens ? 'Refresh' : 'Load' }</Button>
+																	<Button
+																		variant="outlined"
+																		className={classes.buttons}
+																		size="small"
+																	>
+																		{contractTokens ? "Refresh" : "Load"}
+																	</Button>
 																</Grid>
 															</Grid>
 														</Grid>
