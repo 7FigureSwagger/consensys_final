@@ -62,7 +62,7 @@ contract DumpEth {
     }
 
     // Function to deposit to contract
-    function deposit() public payable isAdmin emergencyStop {
+    function deposit() public payable emergencyStop {
         // Only allow the 'deployer' of the contract to deposit
         {
             require(msg.value > 0, 'No Ether sent.');

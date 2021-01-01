@@ -12,7 +12,9 @@ import {
 	CardContent,
 	Divider,
 	Grid,
+	TextField,
 	Typography,
+	withStyles,
 } from "@material-ui/core";
 import Web3 from "web3";
 
@@ -46,7 +48,21 @@ const useStyles = makeStyles((theme) => ({
 		fontSize: "inherit",
 		color: "#ffffff",
 	},
+	input: {
+		color: "#e947ff",
+	},
 }));
+
+const CustomTextField = withStyles({
+	root: {
+		"& label.Mui-focused": {
+			color: "#e947ff",
+		},
+		"& .MuiInput-root:after": {
+			borderBottomColor: "#9265e6",
+		},
+	},
+})(TextField);
 
 function App(props) {
 	const [state, setState] = useState({
@@ -56,8 +72,7 @@ function App(props) {
 		contract: null,
 	});
 	const [loader, setLoader] = useState(false);
-	const [number, setNumber] = useState(0);
-	const [getNum, setGetNum] = useState("0");
+	const [depositAmt, setDepositAmt] = useState('0');
 	const [contractEth, setContractEth] = useState(0);
 	const [contractTokens, getContractTokens] = useState(0);
 	const classes = useStyles();
@@ -86,29 +101,37 @@ function App(props) {
 		});
 	}, []);
 
-	// Set new number in contract
-	const contractDeposit = async (t) => {
-		t.preventDefault();
-		const accounts = await window.ethereum.enable();
-		const account = accounts[0];
-		const gas = await state.contract.methods.getContrac(number).estimateGas();
-		const post = await state.contract.methods.set(number).send({
-			from: account,
-			gas,
-		});
+	// Deposit Eth in contract
+	const deposit = async (t) => {
+		const { contract, accounts } = state;
+		
+		let value = depositAmt * 1000000000000000000;
+		const gas = await contract.methods.deposit().estimateGas({from: accounts[0], value}, (err, val) => {console.log(err ? (err, val) : val)});
+		let post = await contract.methods.deposit().send(
+			{
+				from: accounts[0],
+				gas,
+				value,
+			},
+			(err, val) => {
+				console.log(err, val);
+			}
+			);
 	};
 
-	// Retrieve number from contract
-	const numberGet = async (t) => {
+	// Retrieve balance of Eth from contract
+	const getBalance = async (t) => {
 		const { contract, accounts } = state;
 
 		try {
-			await contract.methods.getContractBalance().call({from: accounts[0]}, (err, val) => {
-				console.log(err, val);
-				setContractEth(val);
-			});
+			await contract.methods
+				.getContractBalance()
+				.call({ from: accounts[0] }, (err, val) => {
+					console.log(err, val);
+					setContractEth(val / 1000000000000000000);
+				});
 		} catch (err) {
-			console.log('function failed.');
+			console.log("function failed.");
 		}
 	};
 
@@ -145,61 +168,98 @@ function App(props) {
 												variant="outlined"
 											>
 												<CardContent className={classes.cardContent}>
-													<Grid container spacing={1}>
-														<Grid item xs sm md={12} lg={12}>
-															<Typography
-																variant="overline"
-																className={classes.cardTitle}
-															>
-																Contract Deposit Balances:
-															</Typography>
-															<Divider style={{ background: "#ffffff" }} />
+													<Grid
+														container
+														spacing={1}
+														style={{ height: "-webkit-fill-available" }}
+													>
+														<Grid container item spacing={1}>
+															<Grid item xs sm md={12} lg={12}>
+																<Typography
+																	variant="overline"
+																	className={classes.cardTitle}
+																>
+																	Contract Deposit Balances:
+																</Typography>
+																<Divider style={{ background: "#ffffff" }} />
+															</Grid>
 														</Grid>
-													</Grid>
-													&nbsp;
-													<Grid container spacing={1}>
-														<Grid item sm md lg={12}>
-															<Grid container spacing={1}>
-																<Grid item lg={6} xl={6}>
-																	<Typography
-																		variant="h6"
-																		style={{ color: "#9265e6" }}
-																	>
-																		Eth: {contractEth ? contractEth : "-"}
-																	</Typography>
+														<Grid container item spacing={1}>
+															<Grid item sm md lg={12}>
+																<Grid container spacing={1}>
+																	<Grid item lg={6} xl={6}>
+																		<Typography
+																			variant="h6"
+																			style={{ color: "#9265e6" }}
+																		>
+																			Eth: {contractEth ? contractEth : "-"}
+																		</Typography>
+																	</Grid>
+																	<Grid item lg={6} xl={6}>
+																		<Button
+																			variant="outlined"
+																			className={classes.buttons}
+																			size="small"
+																			onClick={() => getBalance()}
+																		>
+																			{" "}
+																			{contractEth ? "Refresh" : "Load"}
+																		</Button>
+																	</Grid>
 																</Grid>
-																<Grid item lg={6} xl={6}>
-																	<Button
-																		variant="outlined"
-																		className={classes.buttons}
-																		size="small"
-																		onClick={() => numberGet()}
-																	>
-																		{" "}
-																		{contractEth ? "Refresh" : "Load"}
-																	</Button>
+															</Grid>
+															<Grid item sm md lg={12}>
+																<Grid container spacing={1}>
+																	<Grid item lg={6} xl={6}>
+																		<Typography
+																			variant="h6"
+																			style={{ color: "#9265e6" }}
+																		>
+																			Tokens:{" "}
+																			{contractTokens ? contractTokens : "-"}
+																		</Typography>
+																	</Grid>
+																	<Grid item lg={6} xl={6}>
+																		<Button
+																			variant="outlined"
+																			className={classes.buttons}
+																			size="small"
+																		>
+																			{contractTokens ? "Refresh" : "Load"}
+																		</Button>
+																	</Grid>
 																</Grid>
 															</Grid>
 														</Grid>
-														<Grid item sm md lg={12}>
-															<Grid container spacing={1}>
-																<Grid item lg={6} xl={6}>
-																	<Typography
-																		variant="h6"
-																		style={{ color: "#9265e6" }}
-																	>
-																		Tokens: {contractTokens ? contractTokens : "-"}
-																	</Typography>
-																</Grid>
-																<Grid item lg={6} xl={6}>
+														<Grid container item spacing={1}>
+															<Grid item sm md lg>
+																<form
+																	noValidate
+																	autoComplete="off"
+																	style={{
+																		display: "flex",
+																		flexDirection: "column",
+																	}}
+																>
+																	<CustomTextField
+																		id="deposit-field"
+																		label="Eth to deposit"
+																		size="small"
+																		margin="dense"
+																		onChange={(e) => 
+																			setDepositAmt(e.target.value)
+																		}
+																	/>
+																	&nbsp;
 																	<Button
 																		variant="outlined"
 																		className={classes.buttons}
 																		size="small"
+																		onClick={() => deposit()}
 																	>
-																		{contractTokens ? "Refresh" : "Load"}
+																		Deposit
 																	</Button>
-																</Grid>
+																</form>
 															</Grid>
 														</Grid>
 													</Grid>
@@ -212,39 +272,6 @@ function App(props) {
 										<Grid item xs sm lg xl></Grid>
 									</Grid>
 								</Grid>
-								{/* <Grid item xs sm lg={12} xl>
-									<div className="main">
-										<div className="card">
-											<form className="form" onSubmit={numberSet}>
-												<label>
-													Set your uint256:
-													<input
-														className="input"
-														type="text"
-														name="name"
-														onChange={(t) => setNumber(t.target.value)}
-													/>
-												</label>
-												<button
-													className="button"
-													type="submit"
-													value="Confirm"
-												>
-													Confirm
-												</button>
-											</form>
-											<br />
-											<button
-												className="button"
-												onClick={numberGet}
-												type="button"
-											>
-												Get your uint256
-											</button>
-											{getNum}
-										</div>
-									</div>
-								</Grid> */}
 							</Grid>
 						}
 					></Layout>
