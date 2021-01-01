@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0;
 
+import "@openzeppelin/contracts/math/SafeMath.sol";
+
+
 contract DumpEth {
+    using SafeMath for uint;
     // Balance 'state' of the contract
     // Mapping to store user balance, restricted to private calls, contract does not talk to other contracts
     mapping(address => uint256) private balance;
@@ -67,7 +71,7 @@ contract DumpEth {
         {
             require(msg.value > 0, 'No Ether sent.');
             emit LogDepositMade(address(msg.sender), msg.value);
-            balance[msg.sender] = balance[msg.sender] += msg.value;
+            balance[msg.sender] = SafeMath.add(balance[msg.sender], msg.value);
         }
     }
 
@@ -82,7 +86,7 @@ contract DumpEth {
         {
             // Withdraw Ether to senders address if balance is good and is admin
             emit LogWithdrawalMade(address(msg.sender), _amount);
-            balance[msg.sender] = balance[msg.sender] -= _amount;
+            balance[msg.sender] = SafeMath.sub(balance[msg.sender], _amount);
             address payable x = msg.sender;
             x.transfer(_amount);
         }

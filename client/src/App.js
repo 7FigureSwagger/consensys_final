@@ -1,6 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
 import "fontsource-roboto";
-// import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import DumpEth from "./contracts/DumpEth.json";
 import { makeStyles } from "@material-ui/core/styles";
 import getWeb3 from "./getWeb3";
@@ -16,7 +15,6 @@ import {
 	Typography,
 	withStyles,
 } from "@material-ui/core";
-import Web3 from "web3";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -102,11 +100,11 @@ function App(props) {
 		});
 	}, []);
 
+
 	// Deposit Eth in contract
 	const deposit = async (t) => {
 		const { contract, accounts } = state;
 		let value = depositAmt * 1000000000000000000;
-
 
 		// Calculate estimated gas needed
 		const gas = await contract.methods
@@ -123,13 +121,14 @@ function App(props) {
 				value,
 			},
 			(err, val) => {
-				
+
 				// Reset state
 				setDepositAmt(""); 
 				console.log(err, val);
 			}
 		);
 	};
+
 
 	// Withdraw Eth from contract
 	const withdraw = async (t) => {
@@ -162,12 +161,13 @@ function App(props) {
 				.getContractBalance()
 				.call({ from: accounts[0] }, (err, val) => {
 					console.log(err, val);
-					setContractEth(String(val / 1000000000000000000));
+					setContractEth((val / 1000000000000000000).toString());
 				});
 		} catch (err) {
 			console.log("function failed.");
 		}
 	};
+
 
 	// Make sure web3 and contract instance is loaded for proper rendering
 	if (!state.web3 || !state.contract) {
