@@ -72,8 +72,9 @@ function App(props) {
 		contract: null,
 	});
 	const [loader, setLoader] = useState(false);
-	const [depositAmt, setDepositAmt] = useState('0');
-	const [contractEth, setContractEth] = useState(0);
+	const [withdrawAmt, setWithdrawAmt] = useState("");
+	const [depositAmt, setDepositAmt] = useState("");
+	const [contractEth, setContractEth] = useState("");
 	const [contractTokens, getContractTokens] = useState(0);
 	const classes = useStyles();
 
@@ -104,9 +105,17 @@ function App(props) {
 	// Deposit Eth in contract
 	const deposit = async (t) => {
 		const { contract, accounts } = state;
-		
 		let value = depositAmt * 1000000000000000000;
-		const gas = await contract.methods.deposit().estimateGas({from: accounts[0], value}, (err, val) => {console.log(err ? (err, val) : val)});
+
+
+		// Calculate estimated gas needed
+		const gas = await contract.methods
+			.deposit()
+			.estimateGas({ from: accounts[0], value }, (err, val) => {
+				console.log(err ? (err, val) : val);
+			});
+
+		// Send built transaction
 		let post = await contract.methods.deposit().send(
 			{
 				from: accounts[0],
@@ -114,9 +123,34 @@ function App(props) {
 				value,
 			},
 			(err, val) => {
+				
+				// Reset state
+				setDepositAmt(""); 
 				console.log(err, val);
 			}
-			);
+		);
+	};
+
+	// Withdraw Eth from contract
+	const withdraw = async (t) => {
+		const { contract, accounts } = state;
+		let value = withdrawAmt * 1000000000000000000;
+
+		const gas = await contract.methods
+			.withdraw(value.toString())
+			.estimateGas({ from: accounts[0]}, (err, val) => {
+				console.log(err ? (err, val) : val);
+			});
+		await contract.methods.withdraw(value.toString()).send(
+			{
+				from: accounts[0],
+				gas,
+			},
+			(err, val) => {
+				console.log(err, val);
+				setWithdrawAmt("");
+			}
+		);
 	};
 
 	// Retrieve balance of Eth from contract
@@ -128,7 +162,7 @@ function App(props) {
 				.getContractBalance()
 				.call({ from: accounts[0] }, (err, val) => {
 					console.log(err, val);
-					setContractEth(val / 1000000000000000000);
+					setContractEth(String(val / 1000000000000000000));
 				});
 		} catch (err) {
 			console.log("function failed.");
@@ -246,7 +280,7 @@ function App(props) {
 																		label="Eth to deposit"
 																		size="small"
 																		margin="dense"
-																		onChange={(e) => 
+																		onChange={(e) =>
 																			setDepositAmt(e.target.value)
 																		}
 																	/>
@@ -258,6 +292,24 @@ function App(props) {
 																		onClick={() => deposit()}
 																	>
 																		Deposit
+																	</Button>
+																	<CustomTextField
+																		id="deposit-field"
+																		label="Eth to withdraw"
+																		size="small"
+																		margin="dense"
+																		onChange={(e) =>
+																			setWithdrawAmt(e.target.value)
+																		}
+																	/>
+																	&nbsp;
+																	<Button
+																		variant="outlined"
+																		className={classes.buttons}
+																		size="small"
+																		onClick={() => withdraw(withdrawAmt)}
+																	>
+																		Withdraw
 																	</Button>
 																</form>
 															</Grid>
