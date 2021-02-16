@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-
+import '@openzeppelin/contracts/math/SafeMath.sol';
 
 contract DumpEth {
     using SafeMath for uint;
@@ -66,7 +65,7 @@ contract DumpEth {
     }
 
     // Function to deposit to contract
-    function deposit() public payable emergencyStop {
+    function deposit() public payable isAdmin emergencyStop {
         // Only allow the 'deployer' of the contract to deposit
         {
             require(msg.value > 0, 'No Ether sent.');
