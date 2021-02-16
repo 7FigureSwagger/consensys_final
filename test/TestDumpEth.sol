@@ -6,15 +6,14 @@ import "../contracts/DumpEth.sol";
 
 contract TestDumpEth {
 
-    function testIsActive() public {
-        DumpEth dumpEth = DumpEth(DeployedAddresses.DumpEth());
-        bool stopped;
+    DumpEth dump = new DumpEth();
 
-        stopped = false;
+    // Test toggling state of circuit breaker
+    function testToggleActive() public {
+        // Toggle Active state
+        dump.toggleActive();
 
-        dumpEth.toggleActive();
-
-        Assert.isTrue(stopped, "hmm...");
+        Assert.isTrue(dump.isActive(), "hmm...");
     }
 
     // funstion test
