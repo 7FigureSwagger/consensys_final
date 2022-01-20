@@ -6,15 +6,36 @@ import "../contracts/DumpEth.sol";
 
 contract TestDumpEth {
 
-    DumpEth dump = new DumpEth();
+		uint public initialBalance = 1 ether;
 
-    // Test toggling state of circuit breaker
-    function testToggleActive() public {
-        // Toggle Active state
-        dump.toggleActive();
+		DumpEth dump = new DumpEth();
 
-        Assert.isTrue(dump.isActive(), "hmm...");
-    }
 
-    // funstion test
+		// Test deposit function
+		// function testGetContractBalance() public {
+		// 		// Deposit some ether
+		// 		address(dump).transfer(1000 wei);
+
+		// 		Assert.equal(dump.getContractBalance(), 1000 wei, "Balance is not what was expected (0.5 ether)");
+		// }
+
+
+		// Test withdraw function
+		function testWithdraw() public {
+				address(dump).transfer(1000 wei);
+				// Withdraw deposited ether
+				dump.withdraw(1000 wei);
+		
+				Assert.equal(dump.getContractBalance(), 0 wei, "Balance is not what was expected (0.25 ether)");
+				// Assert.equal(initialBalance == 0.75 ether, "Balance is not what was expected (0.75 ether)");
+		}
+
+
+		// Test toggling state of circuit breaker
+		function testToggleActive() public {
+				// Toggle Active state
+				dump.toggleActive();
+
+				Assert.isTrue(dump.isActive(), "hmm...");
+		}
 }
