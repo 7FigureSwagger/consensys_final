@@ -1,4 +1,4 @@
-var DumpEth = artifacts.require("./DumpEth.sol");
+var DumpEth = artifacts.require("../contracts/DumpEth.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(DumpEth);

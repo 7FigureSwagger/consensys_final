@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-
+// import '@openzeppelin/contracts/math/SafeMath.sol';
+import "./SafeMath.sol";
 
 contract DumpEth {
     using SafeMath for uint;
@@ -15,7 +15,6 @@ contract DumpEth {
 
     // State for circuit breaker
     bool private stopped;
-
 
     // Set the owner to the creator of this contract
     constructor() {
@@ -60,13 +59,19 @@ contract DumpEth {
         _;
     }
 
+    // Function for checking if contract is Enabled
+    function isActive() public view returns(bool)
+    {
+        return stopped;
+    }
+
     // Function for stopping contract
     function toggleActive() public isAdmin {
         stopped = !stopped;
     }
 
     // Function to deposit to contract
-    function deposit() public payable emergencyStop {
+    function deposit() public payable isAdmin emergencyStop {
         // Only allow the 'deployer' of the contract to deposit
         {
             require(msg.value > 0, 'No Ether sent.');

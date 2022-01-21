@@ -121,7 +121,6 @@ function App(props) {
 				value,
 			},
 			(err, val) => {
-
 				// Reset state
 				setDepositAmt(""); 
 				console.log(err, val);

@@ -8,8 +8,8 @@ The intended purpose is to be a sort of "hot-wallet" that lives on-chain. The ow
 
 ##### Setting up the project locally:
 - clone repository
-- cd into directory and install dependancies
-		
+- cd into client directory and install dependancies
+
 		npm install
 - open a development server, for this I used Ganache-GUI
 - set up network and related info in "**truffle-config.js**"
